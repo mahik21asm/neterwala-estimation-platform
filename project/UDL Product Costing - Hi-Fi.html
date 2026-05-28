@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>UDL · Product Costing</title>
+<link rel="stylesheet" href="hifi/styles.css"/>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="hifi/data.js"></script>
+<script src="hifi/engine.js"></script>
+<script src="tweaks-panel.jsx" type="text/babel"></script>
+<script src="hifi/icons.jsx" type="text/babel"></script>
+<script src="hifi/dashboard-history.jsx" type="text/babel"></script>
+<script src="hifi/sales-entry.jsx" type="text/babel"></script>
+<script src="hifi/estimation-sheet.jsx" type="text/babel"></script>
+<script src="hifi/master-export.jsx" type="text/babel"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useMemo } = React;
+
+const NAV = [
+  { key:'dashboard',  label:'Dashboard',     ico:'dashboard',   crumb:'Overview' },
+  { key:'history',    label:'Estimations',   ico:'list',        crumb:'Estimations', badge:'218' },
+  { key:'salesentry', label:'New Estimation',ico:'edit',        crumb:'New Estimation' },
+  { key:'estimation', label:'Estimation Sheet',ico:'sheet',     crumb:'EST-2024-0931 · 30D' },
+  { key:'master',     label:'Master Data',   ico:'database',    crumb:'Master Data' },
+  { key:'export',     label:'Export & Quote',ico:'download',    crumb:'Export' },
+];
+
+function App() {
+  const [active, setActive] = useState('dashboard');
+  const [data, setData] = useState(() => JSON.parse(JSON.stringify(window.UDL_DATA.sample)));
+
+  // Tweaks
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "plant": "Nasik",
+    "materialType": "MS",
+    "showRiserCredit": true,
+    "scenario": "B"
+  }/*EDITMODE-END*/;
+  const t = window.useTweaks ? window.useTweaks(TWEAK_DEFAULTS) : { tweaks: TWEAK_DEFAULTS, setTweak: () => {} };
+  const tweaks = t.tweaks || TWEAK_DEFAULTS;
+
+  // Cascade tweaks → data
+  const liveData = useMemo(() => ({
+    ...data,
+    salesEntry: { ...data.salesEntry, plant: tweaks.plant, materialType: tweaks.materialType }
+  }), [data, tweaks.plant, tweaks.materialType]);
+
+  const cur = NAV.find(n => n.key === active);
+  const Icon = window.Icon;
+  const c = window.UDL_ENGINE.compute(liveData);
+
+  return (
+    <div className="app">
+      <header className="topbar" data-screen-label="Topbar">
+        <div className="brand">
+          <div className="brand-mark">U</div>
+          <div className="brand-text">UDL <span className="sub">/ Costing</span></div>
+        </div>
+        <nav className="crumbs">
+          <span>UDL Castings</span>
+          <span className="sep">/</span>
+          <span className="cur">{cur.crumb}</span>
+        </nav>
+        <div className="topbar-spacer"/>
+        <div className="context-chip"><span className="dot"/><span className="k">Plant</span><span className="v">{tweaks.plant}</span></div>
+        <div className="context-chip"><span className="k">FY</span><span className="v">2024-25</span></div>
+        <button className="icon-btn" title="Search"><Icon name="search" size={16}/></button>
+        <button className="icon-btn" title="Notifications"><Icon name="bell" size={16}/></button>
+        <button className="icon-btn" title="Help"><Icon name="help" size={16}/></button>
+        <div className="context-chip" style={{paddingRight:6}}>
+          <span style={{width:22,height:22,borderRadius:'50%',background:'var(--brand)',display:'grid',placeItems:'center',fontSize:10,fontWeight:600}}>RP</span>
+          <span className="v">R. Patil</span>
+          <span className="k">· Estimator</span>
+        </div>
+      </header>
+
+      <aside className="sidebar">
+        <div className="nav-section-label">Workspace</div>
+        {NAV.slice(0,4).map(n => (
+          <a key={n.key} className={`nav-item ${active===n.key?'active':''}`} onClick={()=>setActive(n.key)}>
+            <span className="nav-ico"><Icon name={n.ico} size={15}/></span>
+            <span>{n.label}</span>
+            {n.badge && <span className="nav-badge">{n.badge}</span>}
+          </a>
+        ))}
+        <div className="nav-divider"/>
+        <div className="nav-section-label">Configuration</div>
+        {NAV.slice(4).map(n => (
+          <a key={n.key} className={`nav-item ${active===n.key?'active':''}`} onClick={()=>setActive(n.key)}>
+            <span className="nav-ico"><Icon name={n.ico} size={15}/></span>
+            <span>{n.label}</span>
+          </a>
+        ))}
+        <div className="sidebar-footer">
+          <span className="ok-dot"/> All systems · v2.4.1
+        </div>
+      </aside>
+
+      <main className="main" data-screen-label={`${active}`}>
+        <PageHead active={active} cur={cur} data={liveData} c={c} setActive={setActive}/>
+
+        {active==='dashboard'  && <window.HiFiDashboard onNavigate={setActive}/>}
+        {active==='history'    && <window.HiFiHistory   onNavigate={setActive}/>}
+        {active==='salesentry' && <window.HiFiSalesEntry data={liveData} setData={setData} onSubmit={()=>setActive('estimation')}/>}
+        {active==='estimation' && <window.HiFiEstimation data={liveData} setData={setData}/>}
+        {active==='master'     && <window.HiFiMasterData/>}
+        {active==='export'     && <window.HiFiExport    data={liveData}/>}
+      </main>
+    </div>
+  );
+}
+
+function PageHead({ active, cur, data, c, setActive }) {
+  const Icon = window.Icon;
+  const fmt = window.fmtN, fmtI = window.fmtI;
+  const se = data.salesEntry;
+  const titles = {
+    dashboard:  { title:'Dashboard',          sub:'Costing operations · live overview' },
+    history:    { title:'Estimations',        sub:'All quotations across both plants' },
+    salesentry: { title:'New Estimation',     sub:`Step-by-step intake · linked to ${se.plant} masters` },
+    estimation: { title:'Estimation Sheet',   sub:`${se.itemCode} · ${se.partDescription} · ${se.customerName}` },
+    master:     { title:'Master Data',        sub:'Plant overheads, rates, libraries' },
+    export:     { title:'Export & Quote',     sub:'Generate customer-facing documents' },
+  };
+  const t = titles[active];
+
+  return (
+    <div className="page-head">
+      <div>
+        <h1>{t.title}</h1>
+        <div className="page-sub">{t.sub}</div>
+      </div>
+      <div className="page-actions">
+        {active==='dashboard' && <button className="btn brand" onClick={()=>setActive('salesentry')}><Icon name="plus" size={14}/> New estimation</button>}
+        {active==='history'   && <>
+          <button className="btn ghost"><Icon name="filter" size={14}/> Filter</button>
+          <button className="btn ghost"><Icon name="download" size={14}/> Export CSV</button>
+          <button className="btn brand" onClick={()=>setActive('salesentry')}><Icon name="plus" size={14}/> New estimation</button>
+        </>}
+        {active==='estimation' && <>
+          <button className="btn ghost"><Icon name="compare" size={14}/> Compare</button>
+          <button className="btn ghost"><Icon name="copy" size={14}/> Clone</button>
+          <button className="btn brand" onClick={()=>setActive('export')}><Icon name="check" size={14}/> Submit · ₹{fmt(c.quotedWith[1])}</button>
+        </>}
+        {active==='salesentry' && <button className="btn ghost"><Icon name="x" size={14}/> Discard draft</button>}
+        {active==='master'     && <button className="btn ghost"><Icon name="lock" size={14}/> Admin-only</button>}
+        {active==='export'     && <button className="btn brand"><Icon name="download" size={14}/> Download all</button>}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

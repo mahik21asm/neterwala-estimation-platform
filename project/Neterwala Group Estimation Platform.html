@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Neterwala Group Product Estimation Platform — Wireframe</title>
+<link rel="stylesheet" href="styles.css" />
+<style>
+  /* ===== Platform-level overrides on top of styles.css ===== */
+  .topbar { gap: 16px; padding: 0 20px; min-height: 64px; }
+  .nw-brand {
+    display: flex; align-items: center; gap: 12px;
+    padding-right: 16px;
+    border-right: 1.5px dashed var(--ink);
+  }
+  .nw-brand img {
+    width: 44px; height: 44px;
+    object-fit: contain;
+    filter: grayscale(0.05);
+  }
+  .nw-brand-text {
+    line-height: 1.15;
+  }
+  .nw-brand-text .t1 {
+    font-family: var(--font-hand-bold);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .nw-brand-text .t2 {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .nw-platform-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px;
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    background: var(--xl-yellow);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+    transform: rotate(-1deg);
+  }
+  .nw-context {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 5px 12px;
+    border: 1.5px solid var(--ink);
+    border-radius: 8px;
+    background: var(--paper);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .nw-context .lbl {
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .nw-context .val {
+    font-family: var(--font-hand-bold);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+  .nw-context .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    border: 1.5px solid var(--ink);
+  }
+
+  .app {
+    grid-template-columns: 260px 1fr;
+    grid-template-rows: 76px 1fr;
+  }
+  .sidebar {
+    padding: 14px 12px;
+    position: relative;
+    min-height: calc(100vh - 76px);
+  }
+  .nav-item {
+    font-size: 15px;
+    padding: 7px 10px;
+  }
+  .nav-item.active {
+    font-size: 17px;
+  }
+
+  /* SLA pill colors */
+  .status-pill.live { background: var(--xl-green); }
+  .status-pill.planned { background: var(--paper-2); border-style: dashed; }
+  .status-pill.pilot { background: #ce93d8; }
+  .status-pill.submitted { background: var(--xl-blue); }
+  .status-pill.approved { background: var(--xl-green); }
+
+  /* sticky context strip */
+  .nw-context-strip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    border: 1.5px dashed var(--ink);
+    border-radius: 8px;
+    background: var(--paper-2);
+    margin-bottom: 16px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+  .nw-context-strip b { font-family: var(--font-hand-bold); font-size: 15px; }
+
+  /* footer note */
+  .nw-foot {
+    position: absolute;
+    bottom: 14px; left: 12px; right: 12px;
+    padding: 10px;
+    border: 1.5px dashed var(--ink);
+    border-radius: 6px;
+    background: var(--paper-2);
+    font-size: 11.5px;
+    font-family: var(--font-mono);
+    line-height: 1.5;
+  }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<template id="__bundler_thumbnail" data-bg-color="#fafaf6">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#fafaf6"/>
+    <g transform="translate(280 180)" stroke="#1a1a1a" stroke-width="6" fill="none" stroke-linejoin="round" stroke-linecap="round">
+      <rect x="0" y="0" width="640" height="440" rx="14" fill="#fff"/>
+      <line x1="0" y1="80" x2="640" y2="80"/>
+      <line x1="180" y1="80" x2="180" y2="440"/>
+      <rect x="20" y="20" width="40" height="40" rx="6" fill="#666" stroke="none"/>
+      <text x="76" y="50" font-family="Kalam, sans-serif" font-size="26" fill="#1a1a1a" stroke="none" font-weight="700">Neterwala Group</text>
+      <text x="200" y="130" font-family="Caveat, cursive" font-size="36" fill="#c2410c" stroke="none" font-weight="700">Plant-wise Costing</text>
+      <rect x="200" y="160" width="100" height="60" rx="4" fill="#fff59d" stroke-width="3"/>
+      <rect x="320" y="160" width="100" height="60" rx="4" fill="#bbdefb" stroke-width="3"/>
+      <rect x="440" y="160" width="100" height="60" rx="4" fill="#c8e6c9" stroke-width="3"/>
+      <text x="200" y="270" font-family="JetBrains Mono, monospace" font-size="14" fill="#52525b" stroke="none">UDL · UTPL · UAL · UAML · TGUK</text>
+    </g>
+  </svg>
+</template>
+
+<script src="data.js"></script>
+<script src="engine.js"></script>
+<script src="neterwala-data.js"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="sales-entry.jsx"></script>
+<script type="text/babel" src="estimation-sheet.jsx"></script>
+<script type="text/babel" src="other-pages.jsx"></script>
+<script type="text/babel" src="neterwala-pages.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const NW_TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "company": "UDL",
+  "plant": "Nasik",
+  "role": "Sales",
+  "scenario": 1,
+  "process": "Investment Casting",
+  "showFormulaLayer": true,
+  "density": "normal"
+}/*EDITMODE-END*/;
+
+function NWApp() {
+  const N = window.NW_DATA;
+  const [page, setPage] = useState('dashboard');
+  // useTweaks returns [values, setTweak]; normalize to a single obj for ergonomics
+  const [tVals, setTweakFn] = window.useTweaks ? window.useTweaks(NW_TWEAK_DEFAULTS) : [NW_TWEAK_DEFAULTS, ()=>{}];
+  const t = { ...tVals, setTweak: setTweakFn };
+
+  // Bootstrap legacy data for the existing Estimation Sheet + Sales Entry modules
+  const sample = window.UDL_DATA.sample;
+  const [data, setData] = useState({
+    salesEntry: sample.salesEntry,
+    chargeReturn: sample.chargeReturn,
+    chargeVirgin: sample.chargeVirgin,
+    postFoundry: sample.postFoundry,
+    machining: sample.machining,
+    tests: sample.testApplicability,
+    retAlloyRate: 0,
+  });
+
+  // Plant tweak cascades into sample plant for the Estimation Sheet's existing engine
+  useEffect(() => {
+    const legacyPlant = (t.plant === 'Aurangabad') ? 'Mn' : (t.plant === 'Nasik' ? 'Nasik' : 'Mn');
+    if (legacyPlant !== data.salesEntry.plant) {
+      setData(d => ({ ...d, salesEntry: { ...d.salesEntry, plant: legacyPlant } }));
+    }
+  }, [t.plant]);
+
+  // When user changes company, snap plant to first plant of that company
+  useEffect(() => {
+    const co = N.companies.find(c => c.code === t.company);
+    if (co && !co.plants.includes(t.plant)) {
+      t.setTweak('plant', co.plants[0]);
+    }
+  }, [t.company]);
+
+  const activeCompany = N.companies.find(c => c.code === t.company) || N.companies[0];
+  const activePlant = N.plants[t.plant] || N.plants.Nasik;
+
+  const navItems = [
+    ['Workspace', null],
+    ['dashboard',     'Group Dashboard',  '◧'],
+    ['workflow',      'RFQ Workflow',     '➜', '47'],
+    ['estimations',   'Estimations',      '☰', '218'],
+    ['salesentry',    'Sales Entry',      '✎'],
+    ['estimation',    'Estimation Sheet', '∑'],
+
+    ['Analysis', null],
+    ['plantcmp',      'Plant Comparison', '⇄'],
+    ['scenarios',     'Scenarios & Versions', '⚡'],
+    ['analytics',     'Analytics',        '◔'],
+
+    ['Platform', null],
+    ['master',        'Master Data',      '⊞'],
+    ['sap',           'SAP Integration',  '↔'],
+    ['governance',    'Governance',       '✓'],
+    ['config',        'Configuration',    '⚙'],
+
+    ['Design', null],
+    ['arch',          'Architecture',     '◭'],
+    ['datamodel',     'Data Model',       '◇'],
+    ['export',        'Export',           '↓'],
+  ];
+
+  function NavRender() {
+    let groupOpen = false;
+    const out = [];
+    let buf = [];
+    function flush(name) {
+      if (buf.length) out.push(
+        <div className="nav-group" key={'g'+name}>
+          <div className="nav-label">{name}</div>
+          {buf}
+        </div>
+      );
+      buf = [];
+    }
+    let currentGroup = null;
+    navItems.forEach((row,idx) => {
+      if (row[1] === null) {
+        if (currentGroup !== null) flush(currentGroup);
+        currentGroup = row[0];
+      } else {
+        const [k,l,ic,b] = row;
+        buf.push(
+          <div key={k} className={`nav-item ${page===k?'active':''}`} onClick={()=>setPage(k)}>
+            <span className="ico">{ic}</span><span>{l}</span>
+            {b && <span className="badge">{b}</span>}
+          </div>
+        );
+      }
+    });
+    flush(currentGroup);
+    return out;
+  }
+
+  return (
+    <div className="app">
+      {/* ===================== TOPBAR ===================== */}
+      <header className="topbar">
+        <div className="nw-brand">
+          <img src="hifi/neterwala-logo.png" alt="Neterwala"/>
+          <div className="nw-brand-text">
+            <div className="t1">Neterwala Group</div>
+            <div className="t2">Product Estimation Platform</div>
+          </div>
+        </div>
+
+        <span className="nw-platform-pill">wireframe · v0.2</span>
+
+        <span className="topbar-spacer" />
+
+        <div className="nw-context" title="Switch company">
+          <span className="dot" style={{background:activeCompany.color}}/>
+          <span>
+            <span className="lbl">Company</span><br/>
+            <span className="val">{activeCompany.code}</span>
+          </span>
+          <span style={{fontFamily:'var(--font-mono)',color:'var(--ink-faint)'}}>▾</span>
+        </div>
+
+        <div className="nw-context" title="Switch plant">
+          <span>
+            <span className="lbl">Plant</span><br/>
+            <span className="val">{t.plant}</span>
+          </span>
+          <span style={{fontFamily:'var(--font-mono)',color:'var(--ink-faint)'}}>▾</span>
+        </div>
+
+        <div className="nw-context" title="Process">
+          <span>
+            <span className="lbl">Process</span><br/>
+            <span className="val" style={{fontSize:14}}>{activeCompany.process}</span>
+          </span>
+        </div>
+
+        <div className="user-chip">
+          <span className="av">{t.role[0]}</span>
+          <span style={{fontSize:13}}>{t.role}<br/><span style={{fontSize:10,fontFamily:'var(--font-mono)',color:'var(--ink-soft)'}}>Tech User</span></span>
+        </div>
+      </header>
+
+      {/* ===================== SIDEBAR ===================== */}
+      <aside className="sidebar">
+        {NavRender()}
+        <div className="nw-foot">
+          <b style={{fontFamily:'var(--font-hand-bold)',fontSize:14}}>Group platform · wireframe</b><br/>
+          Low-fi sketch. Common engine across<br/>
+          UDL · UTPL · UAL · UAML · TGUK.
+        </div>
+      </aside>
+
+      {/* ===================== MAIN ===================== */}
+      <main className="main">
+        {/* Sticky context strip — reinforces plant-wise costing */}
+        <div className="nw-context-strip">
+          <span className="dot" style={{display:'inline-block',width:10,height:10,borderRadius:'50%',border:'1.5px solid var(--ink)',background:activeCompany.color}}/>
+          <span>Acting as <b>{t.role}</b></span>
+          <span style={{color:'var(--ink-faint)'}}>·</span>
+          <span>Company: <b>{activeCompany.name}</b></span>
+          <span style={{color:'var(--ink-faint)'}}>·</span>
+          <span>Plant: <b>{t.plant}</b> ({activePlant.ccy})</span>
+          <span style={{color:'var(--ink-faint)'}}>·</span>
+          <span>Process: <b>{activeCompany.process}</b></span>
+          <span style={{flex:1}}/>
+          <span className="sketch-note" style={{margin:0,fontFamily:'var(--font-hand)',fontSize:13}}>
+            ⚠ Plant selection is <b>mandatory</b> — same product, different cost per plant.
+          </span>
+        </div>
+
+        {page==='dashboard' && (<>
+          <h1 className="page-title">Group Dashboard <span className="scribble">5 companies · live</span></h1>
+          <p className="page-sub">Multi-company estimation pipeline. Drill into any tile.</p>
+          <window.NW_GroupDashboard />
+        </>)}
+
+        {page==='workflow' && (<>
+          <h1 className="page-title">RFQ Workflow <span className="scribble">Intake → Estimate → Validate → Approve → Quote</span></h1>
+          <p className="page-sub">Stage-gated workflow across companies. SLA breaches in red.</p>
+          <window.NW_Workflow />
+        </>)}
+
+        {page==='estimations' && (<>
+          <h1 className="page-title">Estimations <span className="scribble">all quotations · group-wide</span></h1>
+          <p className="page-sub">Full history with filters. Open any to view, clone, or compare.</p>
+          <window.HistoryPage onOpen={()=>setPage('estimation')} />
+        </>)}
+
+        {page==='salesentry' && (<>
+          <h1 className="page-title">Sales Entry <span className="scribble">7-step wizard · 70+ fields</span></h1>
+          <p className="page-sub">Captures everything from <em>Sales Entry</em> sheet — Part ID, Composition, Mech props, HT, Mould, Pricing, Tooling.</p>
+          <window.SalesEntryWizard data={data} setData={setData} onSubmit={()=>setPage('estimation')} />
+        </>)}
+
+        {page==='estimation' && (<>
+          <h1 className="page-title">Estimation Sheet <span className="scribble">{data.salesEntry.itemCode} · {t.plant} · {activeCompany.code}</span></h1>
+          <p className="page-sub">All 9 calculation blocks. Plant-driven rates cascade automatically. Cell colors: <span className="tag green">green=linked</span> <span className="tag blue">blue=formula</span> <span className="tag yellow">yellow=editable</span>.</p>
+          <window.EstimationSheet data={data} setData={setData} />
+        </>)}
+
+        {page==='plantcmp' && (<>
+          <h1 className="page-title">Plant Comparison <span className="scribble">same product · multi-plant</span></h1>
+          <p className="page-sub">The platform's hero capability. Same item, different costs across plants — pick the most viable.</p>
+          <window.NW_PlantComparison />
+        </>)}
+
+        {page==='scenarios' && (<>
+          <h1 className="page-title">Scenarios & Versions <span className="scribble">what-if · RFQ → Final</span></h1>
+          <p className="page-sub">Simulate price / yield / plant moves. Save each as an immutable version.</p>
+          <window.NW_Scenarios />
+        </>)}
+
+        {page==='analytics' && (<>
+          <h1 className="page-title">Analytics <span className="scribble">group-level</span></h1>
+          <p className="page-sub">Cost breakdown, material vs labour, plant index, cost drivers.</p>
+          <window.NW_Analytics />
+        </>)}
+
+        {page==='master' && (<>
+          <h1 className="page-title">Master Data <span className="scribble">admin only · audit-logged</span></h1>
+          <p className="page-sub">All rates that drive cost cascades. Per-plant rate masters with role-bound ownership.</p>
+          <window.MasterDataPage />
+        </>)}
+
+        {page==='sap' && (<>
+          <h1 className="page-title">SAP Integration <span className="scribble">S/4HANA · live</span></h1>
+          <p className="page-sub">Inputs: Material Master, BOM, Routing, Work Center Rates. Outputs: Cost Estimate (CK11N equiv.), Price Reference.</p>
+          <window.NW_Sap />
+        </>)}
+
+        {page==='governance' && (<>
+          <h1 className="page-title">Governance <span className="scribble">roles · approvals · audit</span></h1>
+          <p className="page-sub">Sales create · Engineering validate · Finance approve · Plant owns rates · PMO governs.</p>
+          <window.NW_Governance />
+        </>)}
+
+        {page==='config' && (<>
+          <h1 className="page-title">Configuration <span className="scribble">no-code · effective dated</span></h1>
+          <p className="page-sub">Add plants, processes, costing logic, rate masters — without redeploy.</p>
+          <window.NW_Configuration />
+        </>)}
+
+        {page==='arch' && (<>
+          <h1 className="page-title">Architecture <span className="scribble">frontend · backend · SAP</span></h1>
+          <p className="page-sub">Three-tier blueprint. Future hooks for MES, Databricks, Agentic RFQ.</p>
+          <window.NW_Architecture />
+        </>)}
+
+        {page==='datamodel' && (<>
+          <h1 className="page-title">Data Model <span className="scribble">core entities</span></h1>
+          <p className="page-sub">Company → Plant. Product → BOM → Routing. Estimation → Version. Rates per plant.</p>
+          <window.NW_DataModel />
+        </>)}
+
+        {page==='export' && (<>
+          <h1 className="page-title">Export <span className="scribble">PDF or Excel · branded</span></h1>
+          <p className="page-sub">Generate customer-facing documents with Neterwala header on the current version.</p>
+          <window.ExportPage />
+        </>)}
+      </main>
+
+      {window.TweaksPanel && (
+        <window.TweaksPanel title="Tweaks">
+          <window.TweakSection label="Context">
+            <window.TweakSelect
+              label="Company"
+              value={t.company}
+              options={N.companies.map(c=>({value:c.code,label:`${c.code} · ${c.name.split(' ').slice(0,2).join(' ')}`}))}
+              onChange={v=>t.setTweak('company',v)}
+            />
+            <window.TweakSelect
+              label="Plant"
+              value={t.plant}
+              options={activeCompany.plants.map(p=>({value:p,label:`${p} (${N.plants[p].ccy})`}))}
+              onChange={v=>t.setTweak('plant',v)}
+            />
+            <window.TweakRadio
+              label="Acting role"
+              value={t.role}
+              options={['Sales','Engineering','Finance','Plant','PMO']}
+              onChange={v=>t.setTweak('role',v)}
+            />
+          </window.TweakSection>
+
+          <window.TweakSection label="Estimation">
+            <window.TweakSelect
+              label="Rejection scenario"
+              value={String(t.scenario)}
+              options={[{value:'0',label:'A · 15%'},{value:'1',label:'B · 20%'},{value:'2',label:'C · 25%'}]}
+              onChange={v=>t.setTweak('scenario',+v)}
+            />
+            <window.TweakToggle
+              label="Show formula layer"
+              value={t.showFormulaLayer}
+              onChange={v=>t.setTweak('showFormulaLayer',v)}
+            />
+          </window.TweakSection>
+
+          <window.TweakSection label="Wireframe">
+            <window.TweakRadio
+              label="Density"
+              value={t.density}
+              options={['compact','normal','airy']}
+              onChange={v=>t.setTweak('density',v)}
+            />
+          </window.TweakSection>
+        </window.TweaksPanel>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<NWApp />);
+</script>
+</body>
+</html>

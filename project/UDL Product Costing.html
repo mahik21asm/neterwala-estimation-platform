@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UDL Product Costing — Wireframe</title>
+<link rel="stylesheet" href="styles.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<template id="__bundler_thumbnail" data-bg-color="#fafaf7">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#fafaf7"/>
+    <g transform="translate(360 200)" stroke="#18181b" stroke-width="6" fill="none" stroke-linejoin="round" stroke-linecap="round">
+      <rect x="0" y="0" width="480" height="400" rx="14" fill="#fff"/>
+      <line x1="0" y1="80" x2="480" y2="80"/>
+      <rect x="32" y="120" width="180" height="20" rx="4" fill="#fefce8" stroke="none"/>
+      <rect x="32" y="156" width="240" height="20" rx="4" fill="#ecfdf5" stroke="none"/>
+      <rect x="32" y="192" width="120" height="20" rx="4" fill="#eff6ff" stroke="none"/>
+      <rect x="32" y="240" width="416" height="2" stroke="none" fill="#e4e4e7"/>
+      <text x="32" y="300" font-family="Georgia, serif" font-style="italic" font-size="56" fill="#c2410c" stroke="none">UDL</text>
+      <text x="32" y="345" font-family="ui-monospace, monospace" font-size="14" fill="#52525b" stroke="none">PRODUCT COSTING</text>
+    </g>
+  </svg>
+</template>
+
+<script src="data.js"></script>
+<script src="engine.js"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="sales-entry.jsx"></script>
+<script type="text/babel" src="estimation-sheet.jsx"></script>
+<script type="text/babel" src="other-pages.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "plant": "Nasik",
+  "scenario": 1,
+  "withRiserCr": true,
+  "showFormulaLayer": true,
+  "density": "normal"
+}/*EDITMODE-END*/;
+
+function App() {
+  const [page, setPage] = useState('estimation');   // dashboard|history|salesentry|estimation|master|export
+  const t = window.useTweaks ? window.useTweaks(TWEAK_DEFAULTS) : { ...TWEAK_DEFAULTS, setTweak: ()=>{} };
+
+  // Bootstrap data from sample
+  const sample = window.UDL_DATA.sample;
+  const [data, setData] = useState({
+    salesEntry: sample.salesEntry,
+    chargeReturn: sample.chargeReturn,
+    chargeVirgin: sample.chargeVirgin,
+    postFoundry: sample.postFoundry,
+    machining: sample.machining,
+    tests: sample.testApplicability,
+    retAlloyRate: 0,
+  });
+
+  // Plant tweak cascades into salesEntry.plant
+  useEffect(() => {
+    if (t.plant && t.plant !== data.salesEntry.plant) {
+      setData(d => ({ ...d, salesEntry: { ...d.salesEntry, plant: t.plant } }));
+    }
+  }, [t.plant]);
+
+  const navItems = [
+    ['dashboard',  'Dashboard',     '◧'],
+    ['history',    'Estimations',   '☰', '218'],
+    ['salesentry', 'Sales Entry',   '✎'],
+    ['estimation', 'Estimation Sheet','∑'],
+    ['master',     'Master Data',   '⚙'],
+    ['export',     'Export',        '↓'],
+  ];
+
+  return (
+    <div className="app">
+      <header className="topbar">
+        <div className="brand">
+          <span className="logo">U</span>
+          <span>UDL <span style={{color:'var(--accent)'}}>Costing</span></span>
+          <span className="sub">— wireframe v0.1</span>
+        </div>
+        <span className="topbar-spacer" />
+        <span className="context-pill">Plant: <b>{t.plant ?? data.salesEntry.plant}</b> · {data.salesEntry.materialType}</span>
+        <span className="context-pill">Item: <b>{data.salesEntry.itemCode}</b></span>
+        <div className="user-chip"><span className="av">RT</span> Tech User</div>
+      </header>
+
+      <aside className="sidebar">
+        <div className="nav-group">
+          <div className="nav-label">Workspace</div>
+          {navItems.map(([k,l,ic,b])=>(
+            <div key={k} className={`nav-item ${page===k?'active':''}`} onClick={()=>setPage(k)}>
+              <span className="ico">{ic}</span><span>{l}</span>
+              {b && <span className="badge">{b}</span>}
+            </div>
+          ))}
+        </div>
+        <div className="nav-group">
+          <div className="nav-label">Reference</div>
+          <div className="nav-item"><span className="ico">ⓘ</span>Excel mapping</div>
+          <div className="nav-item"><span className="ico">⏍</span>Audit log</div>
+          <div className="nav-item"><span className="ico">?</span>Help</div>
+        </div>
+        <div style={{position:'absolute',bottom:14,left:14,right:14,padding:10,border:'1.5px dashed var(--ink)',borderRadius:6,background:'var(--paper-2)',fontSize:12,fontFamily:'var(--font-mono)'}}>
+          <b>Wireframe</b><br/>Low-fi sketch. All numbers from sample item 30D.
+        </div>
+      </aside>
+
+      <main className="main">
+        {page==='dashboard' && (<>
+          <h1 className="page-title">Dashboard <span className="scribble">overview · last 30 days</span></h1>
+          <p className="page-sub">Quick read on estimation pipeline and recent quotes.</p>
+          <window.DashboardPage />
+        </>)}
+
+        {page==='history' && (<>
+          <h1 className="page-title">Estimations <span className="scribble">all quotations · search & clone</span></h1>
+          <p className="page-sub">Full history with filters. Open any to view, clone, or compare.</p>
+          <window.HistoryPage onOpen={()=>setPage('estimation')} />
+        </>)}
+
+        {page==='salesentry' && (<>
+          <h1 className="page-title">Sales Entry <span className="scribble">7-step wizard · 70+ Excel fields</span></h1>
+          <p className="page-sub">Captures everything from <em>Sales Entry</em> sheet — Part ID, Composition, Mech props, HT, Mould, Pricing, Tooling.</p>
+          <window.SalesEntryWizard data={data} setData={setData} onSubmit={()=>setPage('estimation')} />
+        </>)}
+
+        {page==='estimation' && (<>
+          <h1 className="page-title">Estimation Sheet <span className="scribble">{data.salesEntry.itemCode} · {t.plant ?? data.salesEntry.plant} · {data.salesEntry.materialType}</span></h1>
+          <p className="page-sub">All 9 calculation blocks from the Excel <em>Estimation Sheet</em>. Toggle sections to focus. Cell colors match the spreadsheet (green=linked, blue=formula, yellow=editable).</p>
+          <window.EstimationSheet data={data} setData={setData} />
+        </>)}
+
+        {page==='master' && (<>
+          <h1 className="page-title">Master Data <span className="scribble">admin-only · audit-logged</span></h1>
+          <p className="page-sub">All rates that drive cost cascades. Plant overheads, machine rates, exchange, dropdowns.</p>
+          <window.MasterDataPage />
+        </>)}
+
+        {page==='export' && (<>
+          <h1 className="page-title">Export <span className="scribble">PDF or Excel · color preserved</span></h1>
+          <p className="page-sub">Generate customer-facing documents from the current estimation.</p>
+          <window.ExportPage />
+        </>)}
+      </main>
+
+      {window.TweaksPanel && (
+        <window.TweaksPanel title="Tweaks">
+          <window.TweakSection title="Plant cascade">
+            <window.TweakRadio label="Plant" value={t.plant} options={['Nasik','Mn']} onChange={v=>t.setTweak('plant',v)} />
+            <p style={{margin:'4px 0 0',fontSize:12,color:'#666',fontFamily:'JetBrains Mono'}}>Switching plant re-cascades 6 master rates into the estimation.</p>
+          </window.TweakSection>
+          <window.TweakSection title="Pricing column focus">
+            <window.TweakSelect label="Rejection scenario" value={String(t.scenario)} options={[{value:'0',label:'A · 15%'},{value:'1',label:'B · 20% (default)'},{value:'2',label:'C · 25%'}]} onChange={v=>t.setTweak('scenario',+v)} />
+            <window.TweakToggle label="With Riser Credit" value={t.withRiserCr} onChange={v=>t.setTweak('withRiserCr',v)} />
+          </window.TweakSection>
+          <window.TweakSection title="Wireframe density">
+            <window.TweakRadio label="Layer density" value={t.density} options={['compact','normal','airy']} onChange={v=>t.setTweak('density',v)} />
+            <window.TweakToggle label="Show formula layer (blue cells)" value={t.showFormulaLayer} onChange={v=>t.setTweak('showFormulaLayer',v)} />
+          </window.TweakSection>
+        </window.TweaksPanel>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
