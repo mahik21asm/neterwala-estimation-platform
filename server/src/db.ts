@@ -3,8 +3,14 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+// Support SSL for hosted databases (Railway, Render, etc.)
+const sslConfig = process.env.DATABASE_URL && !process.env.DATABASE_URL.includes('localhost')
+  ? { rejectUnauthorized: false }
+  : false;
+
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+  ssl: sslConfig,
 });
 
 export async function query<T = Record<string, unknown>>(
