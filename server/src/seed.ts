@@ -3,9 +3,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-async function seed() {
-  await initSchema();
-  console.log('Schema ready');
+export async function seed() {
+  console.log('Seeding data...');
 
   // Companies
   await pool.query(`
@@ -140,7 +139,9 @@ async function seed() {
   `);
 
   console.log('Seed complete');
-  await pool.end();
 }
 
-seed().catch(err => { console.error(err); process.exit(1); });
+// Run directly when called as script
+if (process.argv[1] === new URL(import.meta.url).pathname) {
+  seed().then(() => pool.end()).catch(err => { console.error(err); process.exit(1); });
+}

@@ -1,0 +1,13 @@
+[phases.install]
+cmds = [
+  "npm install --prefix server",
+  "npm install --prefix client"
+]
+
+[phases.build]
+cmds = [
+  "npm run build --prefix client"
+]
+
+[start]
+cmd = "NODE_ENV=production ./server/node_modules/.bin/tsx server/src/index.ts"
