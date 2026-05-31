@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "cd server && npm install && cd ../client && npm install && npm run build && cd .. && NODE_ENV=production node -e \"require('./server/node_modules/tsx/dist/cli.mjs')\" server/src/index.ts",
+    "startCommand": "NODE_ENV=production ./server/node_modules/.bin/tsx server/src/index.ts",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 3
   }
