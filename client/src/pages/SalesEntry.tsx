@@ -16,7 +16,7 @@ const initData = (): EstimationData => ({
   postFoundry: [],
   machining: [],
   htRate: 30,
-  tooling: {},
+  tests: {},
 });
 
 export default function SalesEntry() {

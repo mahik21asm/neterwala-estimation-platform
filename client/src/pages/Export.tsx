@@ -17,7 +17,7 @@ export default function Export() {
         ['RFQ No', 'Item Code', 'Customer', 'Company', 'Plant', 'Material', 'Status', 'Updated'],
         ...estimations
           .filter((e: Estimation) => selected.length === 0 || selected.includes(e.id))
-          .map((e: Estimation) => [e.rfqNo, e.itemCode, e.customer ?? '', e.companyCode, e.plantCode, e.materialType, e.status, e.updatedAt ?? '']),
+          .map((e: Estimation) => [e.rfq_no, e.item_code, e.customer ?? '', e.company_code, e.plant_code, e.material_type, e.status, e.updated_at ?? '']),
       ];
       const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
       const blob = new Blob([csv], { type: 'text/csv' });
@@ -88,11 +88,11 @@ export default function Export() {
             {(estimations as Estimation[]).map(e => (
               <tr key={e.id} className={selected.includes(e.id) ? 'row-selected' : ''}>
                 <td><input type="checkbox" checked={selected.includes(e.id)} onChange={() => toggle(e.id)} /></td>
-                <td><span className="mono">{e.rfqNo}</span></td>
-                <td>{e.itemCode}</td>
+                <td><span className="mono">{e.rfq_no}</span></td>
+                <td>{e.item_code}</td>
                 <td>{e.customer}</td>
                 <td><span className={`status-pill status-${e.status}`}>{e.status}</span></td>
-                <td style={{ fontSize: 11, color: 'var(--ink-faint)' }}>{e.updatedAt ? new Date(e.updatedAt).toLocaleDateString() : '—'}</td>
+                <td style={{ fontSize: 11, color: 'var(--ink-faint)' }}>{e.updated_at ? new Date(e.updated_at).toLocaleDateString() : '—'}</td>
               </tr>
             ))}
           </tbody>
